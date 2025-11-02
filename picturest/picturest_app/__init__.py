@@ -1,0 +1,1 @@
+default_app_config = 'picturest_app.apps.UserAppConfig'

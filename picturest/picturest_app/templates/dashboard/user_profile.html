@@ -1,0 +1,410 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Picturest </title>
+    <link rel="icon" type="image/x-icon" href="{% static 'img/picturest_logo.png' %}">
+
+    <link rel="stylesheet" href="{% static 'bootstrap/style.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="{% static 'js/jquery.waypoint.js' %}"></script>
+    <script src="{% static 'js/infinite.min.js' %}"></script>
+    
+</head>
+<body style="font-family: Poppins, arial;">
+
+    <div class="main">
+
+      {% include 'dashboard/navigationbar.html' %}
+
+      <div class="container mt-4 mb-0 pb-0" style="max-width: 90%;">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'homepage' %}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page"><a href="{% url 'user_profile' request.user %}">Profile</a></li>
+          </ol>
+        </nav>
+      </div> 
+
+      <div id="alertContainer" class="position-fixed top-0 start-50 translate-middle-x mt-3" style="z-index: 1050;"></div>
+
+      <div class="container-sm mt-5 mb-5 d-flex align-items-center justify-content-center userprofile-card-container">
+        <div class="col-md-8 col-lg-8 col-sm-12 userprofile-card">
+          <div class="card rounded user-card py-4">
+            <div class=" d-block justify-content-center">
+
+              <div class="px-4 py-2">
+                <img src="{% if profile_user.profile.banner_picture %}{{ profile_user.profile.banner_picture.url }}{% else %}{% static 'img/default-banner.png' %}{% endif %}" class="img-fluid banner" style="object-fit: cover; width: 100%; height: 150px;"/> 
+              </div>
+
+              <div class="text-center px-3">
+                <div class="user-image mr-3"> <img src="{% if profile_user.profile.profile_picture %}{{ profile_user.profile.profile_picture.url }}{% else %}{% static 'img/default-avatar.png' %}{% endif %}" class="" style="height: 150px; width: 150px; border-radius:50%;" />
+                    <h4 class=" name mt-3">{{ profile_user.username }}</h4>
+                    <p class="information mt-3 text-justify mb-4">{{ profile_user.profile.about }}
+                    </p>
+
+                    {% if profile_user == request.user %}
+                    <div class="d-flex justify-content-center mt-1">
+                        <a href="{% url 'edit_profile' request.user %}"> <button type="button" class="btn btn-main edit-profile-button px-3">Edit profile</button> </a>
+                    </div>
+                    {% endif %}
+                    
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <hr class="mt-5 mb-2" style="max-width: 90%; margin: auto;">
+
+    <div style="max-width: 90%; margin: auto;">
+      <ul class="nav justify-content-center">
+        <li class="nav-item">
+          <a class="nav-link user-upload-section" href="#recent-column" aria-current="page">Recent uploads</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link bookmark-section" href="#bookmark-column">Bookmarked</a>
+        </li>
+      </ul>
+    </div>
+
+    <main role="main" style="padding-top: 10px;">   
+      <section class="mt-4 mb-5">
+        <div class="container-fluid-pin">
+    	    <div class="row" id="row" >
+
+            <div class="infinite-container recent-container">
+    		      <div class="card-columns infinite-item recent-column" id="recent-column">
+        	
+                {% if pins_per_page %}
+                {% for image in pins_per_page %}
+  
+                <div class="card card-pin" >
+                    <img class="card-img" src="{{image.image.url}}" alt="Card image">
+                    <div class="overlay activate-modal" data-img="{{image.id}}" data-bs-toggle="modal" data-bs-target="#viewPictureModal">
+                      <h2 class="card-title title">{{ image.title }}</h2>
+                    </div>
+                    
+
+                    <div class="dropstart more">
+                        <i class="fa fa-ellipsis-v" data-bs-toggle="dropdown" aria-expanded="false" aria-hidden="true">
+                        </i>
+                        <ul class="dropdown-menu">
+                          <li><a class="dropdown-item" href="{% url 'download_image' image.id %}">Download Image</a></li>
+                          <li><a class="dropdown-item img-bookmark {% if image.id in bookmark_lists %} marked {% else %} unmarked {% endif %}" data-image-id="{{image.id}}" data-image-uploader="{{image.uploader}}"> {% if image.id in bookmark_lists %} Bookmarked! {% else %} Bookmark Image {% endif %} </a></li>
+                        </ul>
+                      </div>
+                      
+                </div>
+
+                {% endfor %}
+                {% endif %}
+
+                
+              </div>
+              <div class="text-center">
+                {% if pins_per_page.has_next %}
+                <a class="infinite-more-link more-link" href="?page={{ pins_per_page.next_page_number }}">More</a>
+                {% endif %}
+              </div>
+                <!--<div class="loading">
+                  <div class="spinner-grow text-danger" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                  </div>
+                </div> -->
+              
+    		    </div>
+
+
+            <div class="bookmark-container" style="display: none;">
+    		      <div class="card-columns infinite-item bookmark-column" id="bookmark-column">
+        	
+                {% if bookmark_posts %}
+                {% for image in bookmark_posts %}
+  
+                <div class="card card-pin " >
+                    <img class="card-img" src="{{image.image.url}}" alt="Card image">
+                    <div class="overlay activate-modal" data-img="{{image.id}}" data-bs-toggle="modal" data-bs-target="#viewPictureModal">
+                      <h2 class="card-title title">{{ image.title }}</h2>
+                    </div>
+                    
+
+                    <div class="dropstart more">
+                        <i class="fa fa-ellipsis-v" data-bs-toggle="dropdown" aria-expanded="false" aria-hidden="true">
+                        </i>
+                        <ul class="dropdown-menu">
+                          <li><a class="dropdown-item" href="{% url 'download_image' image.id %}">Download Image</a></li>
+                          <li><a class="dropdown-item img-bookmark {% if image.id in bookmark_lists %} marked {% else %} unmarked {% endif %}" data-image-id="{{image.id}}" data-image-uploader="{{image.uploader}}">{% if image.id in bookmark_lists %} Bookmarked! {% else %} Bookmark Image {% endif %}</a></li>
+                        </ul>
+                      </div>
+                      
+                </div>
+
+                {% endfor %}
+                {% endif %}
+                
+              </div>
+                  {% if bookmark_posts.has_next %}
+                  <a class="infinite-more-link more-link" href="?page2={{ bookmark_posts.next_page_number }}">More</a>
+                  {% endif %} 
+
+                
+    		    </div>
+
+
+    	    </div>
+        </div>
+
+        {% include 'dashboard/modals/image_modal.html' %}
+
+        
+        <div class="loading userprofile-loading" style="display: none;">
+                    <div class="spinner-grow text-danger" role="status">
+                      <span class="visually-hidden">Loading...</span>
+                    </div>
+                  </div>
+        
+
+      </section>
+    </main>
+
+    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+
+    
+
+
+  <!-- <script>
+    fetch(`/retrieve-img-bookmarks/`)
+    .then(res => res.json())
+    .then(data => {
+      console.log(data)
+    });
+  </script> -->
+
+  <!--<script>
+
+    var infinite = new Waypoint.Infinite({
+      element: $('.infinite-container')[0],
+      onBeforePageLoad: function () {
+        $('.loading').show();
+      },
+      onAfterPageLoad: function ($items) {
+        $('.loading').hide();
+      }
+      });
+
+      var infinite2 = new Waypoint.Infinite({
+      element: $('.infinite-container2')[0],
+      onBeforePageLoad: function () {
+        $('.loading2').show();
+      },
+      onAfterPageLoad: function ($items) {
+        $('.loading2').hide();
+      }
+      });
+    
+  </script> -->
+  
+
+  <script>
+    document.querySelector('.recent-container').addEventListener('click', function(e) {
+    const bookmark_button = e.target.closest('.img-bookmark');
+    if(bookmark_button){
+
+    const alertContainer = document.getElementById('alertContainer');
+
+    // Create a new alert element
+    const alert = document.createElement('div');
+    alert.className = 'alert alert-success alert-dismissible fade show';
+    alert.role = 'alert';
+    const data = {'image_id': bookmark_button.getAttribute('data-image-id'), 'image_uploader': bookmark_button.getAttribute('data-image-uploader')};
+
+    fetch("/bookmark-image/", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCookie('csrftoken')
+      },
+      body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+      bookmark_button.innerHTML = data['button'];
+      alert.innerHTML = `
+    ${data['message']}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  `;
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+
+    // Append to container
+    alertContainer.appendChild(alert);
+    // Auto-remove after 3 seconds
+    setTimeout(() => {
+      alert.classList.remove('show'); // triggers fade-out
+      alert.addEventListener('transitionend', () => {
+      alert.remove(); // remove from DOM after fade-out completes
+      });
+    }, 3000);
+
+  }
+
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+              const cookie = cookies[i].trim();
+              if (cookie.startsWith(name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+          }
+      }
+      return cookieValue;
+      }
+
+
+});
+  </script>
+
+  <script>
+
+    let infinite1 = new Waypoint.Infinite({
+    element: document.querySelector('.recent-container'),
+    more: '.recent-container .infinite-more-link',
+    items: '.recent-container .infinite-item',
+    onBeforePageLoad: () => { $('.loading').show()
+    console.log('inside the infinite1'); },
+    onAfterPageLoad: () => { $('.loading').hide(); }
+    });
+
+    
+
+    
+
+    console.log(infinite1);
+
+
+    document.querySelector('.nav').addEventListener('click', function(event) {
+
+      //const userUploadSection = document.querySelector('.user-upload-section');
+      //const bookmarkSection = document.querySelector('.bookmark-section');
+      const recentContainer = document.querySelector('.recent-container');
+      const bookmarkContainer = document.querySelector('.bookmark-container');
+
+      if (event.target.classList.contains('user-upload-section')) {
+        // Show user uploads, hide bookmarks
+        recentContainer.style.display = 'block';
+        bookmarkContainer.style.display = 'none';
+        //initInfiniteScroll('.recent-container');
+
+        //userUploadSection.classList.add('active');
+        //bookmarkSection.classList.remove('active');
+
+      } else if (event.target.classList.contains('bookmark-section')) {
+        // Show bookmarks, hide user uploads
+        recentContainer.style.display = 'none';
+        bookmarkContainer.style.display = 'block';
+        //bookmarkContainer.querySelector('.loading').style.display = 'block';
+
+
+        let infinite2 = new Waypoint.Infinite({
+        element: document.querySelector('.bookmark-container'),
+        more: '.bookmark-container .infinite-more-link',
+        items: '.bookmark-container .infinite-item',
+        onBeforePageLoad: () => { $('.loading').show();
+        console.log('inside the infinite2'); },
+        onAfterPageLoad: () => { $('.loading').hide(); }
+        });
+        
+        //bookmarkContainer.querySelector('.loading').style.display = 'none';
+
+        console.log(infinite2);
+        //initInfiniteScroll('.bookmark-container');
+
+        //bookmarkSection.classList.add('active');
+        //userUploadSection.classList.remove('active');
+      }
+    });
+
+
+    let currentInfinite = null;
+    function initInfiniteScroll(containerSelector) {
+      if (currentInfinite) {
+        currentInfinite.destroy(); // Clean up previous instance
+        currentInfinite = null;
+      }
+
+      const container = document.querySelector(containerSelector);
+      if (!container) return;
+
+      console.log(container);
+
+      currentInfinite = new Waypoint.Infinite({
+      element: container,
+      onBeforePageLoad: function () {
+        //$('.loading2').show();
+        container.querySelector('.loading').style.display = 'block';
+        //$(containerSelector).find('.loading').show();
+      },
+      onAfterPageLoad: function ($items) {
+        //$('.loading').hide();
+        container.querySelector('.loading').style.display = 'none';
+        //$(containerSelector).find('.loading').hide();
+      }
+    });
+  }
+
+  </script>
+
+  <!-- <script>
+    document.querySelector('.upload-user-section').addEventListener('click', function() {
+      document.querySelector('.recent-container').style.display = 'block';
+      document.querySelector('.bookmark-container').style.display = 'none';
+    })
+    document.querySelector('.bookmark-section').addEventListener('click', function() {
+      document.querySelector('.recent-container').style.display = 'none';
+      document.querySelector('.bookmark-container').style.display = 'block';
+    })
+
+    var infinite = new Waypoint.Infinite({
+      element: container,
+      onBeforePageLoad: function () {
+        //$('.loading2').show();
+        container.querySelector('.loading').style.display = 'block';
+        //$(containerSelector).find('.loading').show();
+      },
+      onAfterPageLoad: function ($items) {
+        //$('.loading').hide();
+        container.querySelector('.loading').style.display = 'none';
+        //$(containerSelector).find('.loading').hide();
+      }
+    });
+
+  </script> -->
+
+
+  
+
+  <script src="{% static 'js/custom.js' %}"></script>
+  <script src="{% static 'js/image_modal.js' %}"></script>
+
+</body>
+</html>
+
+
+
+
+

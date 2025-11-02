@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="robots" content="noindex, follow">
+    <title>Picturest - Sign Up Form</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'img/picturest_logo.png' %}">
+
+    <!-- Font Icon -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+    <!-- Main css -->
+    <link rel="stylesheet" href="{% static 'bootstrap/style.css' %}">
+    <link rel="stylesheet" href="{% static 'indexStyle.css' %}">
+</head>
+<body>
+
+    <div class="overlay">
+
+        </div>
+
+        <div class="text-center mt-3 d-flex align-items-center justify-content-center">
+            <img src="{% static 'img/picturest_logo.png' %}" alt="" width="85" height="85" class="align-middle">
+            <h1 class="picturest-text">
+                Picturest
+            </h1>
+        </div>
+
+        <div class="container mt-5 mb-5 signin-container">
+            
+            <div class="row p-5">
+
+                <div class="col-md-7 col-lg-7 pr-5 pl-3  pt-0 form-column" style="border-radius: 10px;">
+
+                    <form method="POST" class="registration-form" action="" autocomplete="off">
+                    {% csrf_token %}
+                    <div class="form-group mb-3">
+                        <label for="name">Username</label>
+                        <input type="text" class="form-control" name="name" id="name" maxlength="15" placeholder="Your Username"/>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" name="email" id="email" placeholder="Your Email"/>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="pass">Password</label>
+                        <input type="password" class="form-control" name="pass" id="pass" placeholder="Password"/>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="re-pass">Repeat password</label>
+                        <input type="password" class="form-control" name="re_pass" onchange="password_repeat(event)" id="re_pass" placeholder="Repeat your password"/>
+                    </div>
+
+                        {% if messages %}
+                        <div class="messages">
+                            {% for message in messages %}
+                                <div class="alert alert-danger" role="alert">
+                                {{ message }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="text-center">
+                            <button type="submit" name="signin" id="signin" class="btn btn-primary px-4 py-2" style="font-size: 18px;">Register</button>
+                        </div>
+                    </form>
+                    <a href="/" class="mt-4 sign-up-link-mobile">I already have an account...</a>
+
+                </div>
+
+                <div class="col-md-5 col-lg-5 text-center image-column">
+                    <img src="{% static 'img/8bit-city-city-gif.gif' %}" class="p-2" alt="sign up image">
+                    <a href="/" class="mt-4">I already have an account...</a>
+                </div>
+                
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+        <script src="{% static 'js/custom.js' %}"></script>
+
+
+</body>
+</html>

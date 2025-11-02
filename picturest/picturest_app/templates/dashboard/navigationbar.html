@@ -1,0 +1,54 @@
+{% load static %}
+
+<nav class="navbar  sticky-top navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid header-content">
+    
+    <a class="navbar-brand" href="{% url 'homepage' %}">
+      <img src="{% static 'img/picturest_logo.png' %}" alt="" width="45" height="45" class="d-inline-block align-middle">
+      <span class="Picturest-text"> Picturest </span>
+    </a>
+    <div class="d-flex">
+
+      <form class="search-button-mobile mx-3" method="GET" action="{% url 'homepage' %}">
+        <input class="form-control me-2" type="search" name="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-sub-main search-button" type="submit">Search</button>
+      </form>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </div>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item profile-nav-item mt-1">
+          <a class="nav-link active" aria-current="page" href="{% url 'user_profile' request.user %}">Profile</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="{% url 'homepage' %}">Home</a>
+        </li>
+        <li class="nav-item logout-nav-item">
+          <a class="nav-link active" aria-current="page" href="{% url 'logout' %}">Logout</a>
+        </li>
+      </ul>
+
+      <form class="search-button-desktop" action="{% url 'homepage' %}" method="GET">
+        <input class="form-control me-2" name="search" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-sub-main search-button" type="submit">Search</button>
+      </form>
+
+      <ul class="navbar-nav profile-nav ">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <img class="rounded-circle mr-2" src="{% static 'img/default-avatar.png' %}" width="30">
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+            <li><a class="dropdown-item" href="{% url 'user_profile' request.user %}">Profile</a></li>
+            <li><a class="dropdown-item" href="{% url 'logout' %}"> Logout </a></li>
+          </ul>
+        </li>
+      </ul> 
+    </div>
+
+  </div>
+</nav>

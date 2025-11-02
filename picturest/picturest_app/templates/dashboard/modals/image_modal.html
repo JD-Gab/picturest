@@ -1,0 +1,69 @@
+{% load static %}
+<!-- The Modal -->
+            <div class="modal fade picturest-modal" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" id="viewPictureModal" tabindex="-1">
+              <div class="modal-dialog">
+                <div class="modal-content">
+
+                  <!-- Modal Header -->
+                  <div class="modal-header">
+                    <a href="" class="text-decoration-none">
+                      <span class="user-info d-flex align-items-center">
+                        <img src="{% static 'img/picturest_logo.png' %}" alt="" width="40" height="40" class="d-inline-block align-middle me-2 modal-user-profile-picture">
+                        <h4 class="modal-title"> </h4>
+                      </span>
+                    </a>
+
+                    <button type="button" class="btn-close" title="close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+
+                  <div class="modal-description px-3 pb-2 text-justify pt-2"> </div>
+
+                  <!-- Modal body -->
+                  <div class="modal-body" data-username="{{request.user}}">
+                    <div class="position-relative" >
+                      <div>
+
+                        <img src= "" alt="Image 1" class="w-100 image-main" style="background-color: #fff;">
+                        <div class="text-center mt-3">
+                          <h3>  </h3>
+                          <p class="image-description"> </p>
+                        </div>
+
+                        <div class="text-center mt-3 hiddenEditOptions hidden">
+                          <form method="POST" action="" enctype="multipart/form-data" class="modal-form">
+                            {% csrf_token %}
+                            <div class="postEditImage" name="postEditImage">
+
+                              <input type="text" name="newTitle" class="form-control titlefile" value="" placeholder="">
+                              <input type="file" name="newImage" class="form-control mt-2 imagePreviewClass imagefile" title="Choose new image" accept=".jpg, .png, .jpeg, .webp" placeholder="Choose new image">
+                              <textarea class="form-control newdescription mt-2" name="newdescription" id="descriptiontextarea" rows="5" value=""></textarea>
+                              <img class="blah img-fluid pt-3 text-center" src="" alt="your image" />
+                              <button type="submit" class="btn btn-main mt-2"> Save Changes </button>
+
+                            </div>
+
+                          </form>
+                          
+                        </div>
+                        
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Modal footer -->
+                  <div class="modal-footer">
+                    
+                    <button type="button" title="edit" class="btn btn-warning editImageButton show-edit"><img src="{% static 'img/icons/pencil-square.svg' %}" alt="edit-icon" style="filter: invert(100%);"></button>
+                    <button type="button" title="delete" class="btn btn-danger show-delete" data-bs-target="#deletemodal" data-bs-toggle="modal" data-bs-dismiss="modal"><img src="{% static 'img/icons/trash3.svg' %}" alt="trash-icon" style="filter: invert(100%);"></button>
+                    
+                    <button type="button" title="close" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <script>
+              var url_default_avatar = "{% static 'img/default-avatar.png' %}";
+            </script>
+
+            {% include 'dashboard/modals/delete_image_modal.html' %}
